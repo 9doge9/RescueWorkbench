@@ -4,6 +4,8 @@
 
 绿色便携版,**双击即用**,无需安装。中文界面,全程引导。
 
+> 🌐 **English speakers**: RescueWorkbench is a Chinese-first, portable Windows data-recovery toolkit — verified disk imaging, NTFS/exFAT/ext4/HFS+ recovery, surveillance-video repair, BitLocker unlock, RAID rebuild, ransomware triage. You don't need to read Chinese: hand it to any MCP-capable AI agent (Claude, Codex, Cursor, Trae, ZCode…) and just say what happened, e.g. *"my USB drive asks to format — recover my photos"*. The agent drives the whole rescue and reports back in English. See **[AGENT.md](AGENT.md)** · portable build in **[Releases](../../releases)**.
+
 ## 两种用法，任选其一
 
 **👤 自己动手（推荐）**

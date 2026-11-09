@@ -35,3 +35,43 @@ Claude Desktop / Cursor / ZCode 等支持MCP的客户端可直接挂:
 
 误删恢复: `scan` → `files(deleted_only=true)` → `extract(ids=...)` → `harvest`盘点
 坏盘抢救: `probe` → `image(mode=verified)` → 之后全部对镜像文件做
+
+---
+
+# English
+
+RescueWorkbench is a local HTTP service (default `http://127.0.0.1:8765`, see the startup banner) exposing a full Windows data-recovery toolkit over a JSON API. No auth (localhost only). The UI is Chinese, but the API is language-neutral — an AI agent can operate everything without reading a word of Chinese.
+
+## Quick start (30 seconds)
+
+```
+GET  /api/schema                          # ← start here: all job kinds, params, returns, scenario playbook
+POST /api/job  {"kind":"scan","params":{"source":"D:\\disk.img"}}   # start → {"id":"..."}
+GET  /api/job/<id>                        # poll; state=done carries result, failed carries error
+POST /api/job/<id>/cancel                 # cancel
+GET  /api/harvest                         # inventory of all recovered outputs
+```
+
+## Key conventions
+
+- **Job model**: every operation is async (start → poll → terminal state). Imaging can take hours; re-running the same params resumes.
+- **source**: a device path (`\\.\PhysicalDrive1`) or an image/partition file. **Golden rule: if the disk may be dying, run `image` first and operate on the image afterwards.**
+- **Safety**: sources are strictly read-only; output on the same disk as the source is refused.
+- **Scenario playbook**: `scenarios` in the schema maps 8 typical disasters (accidental deletion / BitLocker / RAID / ransomware…) to step-by-step pipelines.
+
+## MCP integration (native AI clients)
+
+Works with Claude Desktop, Cursor, Codex, Trae, ZCode and any MCP-capable client:
+
+```json
+{"mcpServers": {"rescueworkbench": {
+    "command": "python",
+    "args": ["C:/RescueWorkbench/mcp_server.py", "8765"]}}}
+```
+
+Every recovery channel becomes a tool (`rw_probe`, `rw_extract`, `rw_blunlock`, …) plus helpers (`rw_schema`/`rw_devices`/`rw_harvest`/`rw_findpart`/`rw_job_status`/`rw_job_cancel`). Tools wait up to 180s by default, then return the job id for polling.
+
+## Example pipelines
+
+- Accidental deletion: `scan` → `files(deleted_only=true)` → `extract(ids=...)` → `harvest`
+- Dying disk: `probe` → `image(mode=verified)` → work on the image file from then on
