@@ -9,7 +9,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # LibreOffice python自spawn会WinError5, 统一走py启动器(官方3.11)
 PYBASE = ['py', '-3'] if os.system('py -3 -c "1" >nul 2>&1') == 0 else [sys.executable]
 
-SUITES = ['test_units.py', 'test_safeguard.py', 'test_imager.py', 'test_wxdat.py', 'test_allocmap.py', 'test_h264carve.py', 'test_dav.py', 'test_exfatdeep.py', 'test_vmdisk.py', 'test_ext4.py', 'test_bitlocker.py', 'test_content.py', 'test_t4.py', 'test_raid.py', 'test_macfs.py', 'test_pst.py', 'test_e2e.py']
+SUITES = ['test_units.py', 'test_safeguard.py', 'test_imager.py', 'test_wxdat.py', 'test_allocmap.py', 'test_h264carve.py', 'test_dav.py', 'test_exfatdeep.py', 'test_vmdisk.py', 'test_ext4.py', 'test_bitlocker.py', 'test_content.py', 'test_t4.py', 'test_raid.py', 'test_macfs.py', 'test_pst.py', 'test_e2e.py', 'test_mcp.py']
 
 results = {}
 for s in SUITES:

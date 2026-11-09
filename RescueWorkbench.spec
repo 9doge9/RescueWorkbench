@@ -5,7 +5,7 @@ a = Analysis(
     ['app.py'],
     pathex=[],
     binaries=[],
-    datas=[('web', 'web'), ('engine', 'engine'), ('licenses', 'licenses')],
+    datas=[('web', 'web'), ('engine', 'engine'), ('licenses', 'licenses'), ('mcp_server.py', '.'), ('AGENT.md', '.')],
     hiddenimports=['sfadapter', 'pipeline', 'jobstore', 'stability', 'imager', 'mapfile', 'safeguard'],
     hookspath=[],
     hooksconfig={},

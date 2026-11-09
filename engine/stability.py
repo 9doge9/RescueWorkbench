@@ -32,7 +32,10 @@ def sha(b):
 
 def probe_repeat(f, size, rounds=2, sample_mb=1):
     """定点重复读探测。返回 (不稳定点数, 总点数, 详情)"""
-    n = sample_mb * 1024 * 1024
+    n = min(sample_mb * 1024 * 1024, size)          # 小文件/小分区: 采样块收缩, 防负偏移seek
+    n -= n % 512
+    if n <= 0:
+        return 0, 0, []
     bad = 0
     details = []
     for pct in SAMPLE_POINTS:

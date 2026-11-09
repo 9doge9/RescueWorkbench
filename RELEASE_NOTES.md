@@ -1,4 +1,4 @@
-# 数据抢救工作台 v1.2.0 发布说明
+# 数据抢救工作台 v1.3.0 发布说明
 
 一个绿色便携的 Windows 数据恢复工具:从损坏的 U 盘/硬盘/监控盘/虚拟机盘/加密盘里抢回数据。
 中文界面,双击即用,全程只读源盘。
@@ -21,11 +21,12 @@
 - **Outlook**:PST/OST 结构体检(孤儿邮件/缺块),头损兜底扫描;含 Outlook 2013+ 默认 4K 页格式
 - **勒索现场**:家族识别+免费解密器线索(GandCrab 有免费解密器等)
 - **内容取证**:EXIF时间归档/SQLite已删记录/Base64内嵌提取/**事件日志事件ID解析**(登录/USB接入/服务安装等30+常见事件,经真实evtx双库校准)/加密卷检测/CHK识别拆分
+- **AI/脚本接入**: `GET /api/schema` 能力自描述 + MCP服务器(`mcp_server.py`), 可被Claude/Cursor/ZCode等AI客户端直接调用
 - **体检结论融合 SMART**:读取稳定但盘有物理病灶(重映射/待映射)时自动升级为校验式镜像建议
 
 ## 获取与安装
 
-1. 从 [Releases](../../releases) 下载 `RescueWorkbench-v1.2.0-win64.zip` 并解压(文件夹整体保留)
+1. 从 [Releases](../../releases) 下载 `RescueWorkbench-v1.3.0-win64.zip` 并解压(文件夹整体保留)
 2. 双击 `RescueWorkbench.exe`(UAC 提权——读物理盘需要)
 3. 或者从源码运行:克隆本仓库,把 `sf-cli.exe` 与 `untrunc/smartctl`(见下)放进 `engine/bin/`,再 `run.bat`
 

@@ -200,6 +200,13 @@ class Handler(BaseHTTPRequestHandler):
         elif p == '/api/version':
             import version
             self._json({'ok': True, 'version': version.VERSION, 'build': version.build_time()})
+        elif p == '/api/schema':
+            import schema
+            sc = schema.get_schema()
+            miss = schema.missing_in_schema()
+            if miss:
+                sc['warning'] = '未登记进schema的任务类型: ' + ','.join(miss)
+            self._json(sc)
         elif p.startswith('/api/job/'):
             jid = p.split('/')[-1]
             j = jobstore.load(jid)

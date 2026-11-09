@@ -72,6 +72,14 @@ python -I tests/run_all.py     # 17 套测试
 
 运行所需的三个二进制(sf-cli / untrunc / smartctl)下载指引见 [RELEASE_NOTES.md](RELEASE_NOTES.md)。
 
+## 🤖 AI / 脚本接入
+
+本工具的全部能力通过本地JSON API暴露, 可被AI Agent直接操作:
+
+- 能力自描述: `GET /api/schema` (全部任务类型/参数/场景决策表)
+- MCP接入: `mcp_server.py` — Claude Desktop / Cursor / ZCode 等客户端挂载后, 每个恢复通道都是一个工具
+- 详见 [AGENT.md](AGENT.md)
+
 ## ☕ 支持作者
 
 本工具开源免费,无广告无付费墙。如果它帮您抢回了重要的数据,可以请作者喝杯咖啡——金额随意,这是持续更新的动力:
