@@ -1,0 +1,27 @@
+# 构建产物
+build/
+dist/
+__pycache__/
+*.pyc
+
+# 用户数据(运行时产生)
+jobs/
+
+# 大二进制: 组件与测试夹具不入库(见RELEASE_NOTES的获取方式)
+engine/bin/
+tests/fixtures/*.vhd
+tests/fixtures/*.img
+
+# 内部文档(不公开)
+开发日志.md
+许可合规分析.md
+参考-SectorForge.md
+底层代码参考-SectorForge.md
+
+# 本机辅助脚本(含个人路径)
+start_server.ps1
+launch_elevated.ps1
+
+# 系统杂物
+Thumbs.db
+desktop.ini

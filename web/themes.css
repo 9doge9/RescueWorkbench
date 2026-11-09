@@ -1,0 +1,84 @@
+/* ═══ 多主题系统 — 6套配色方案 ═══
+   切换方式: html[data-theme="id"] */
+
+/* ── 1. 深空 (默认, SectorForge风格) ── */
+:root, [data-theme="deepspace"] {
+  --bg:#0d1117; --bg2:#0d0f12; --card:#161b22; --card2:#1a1f26; --card-hi:#1c222b;
+  --line:#2a3038; --line-soft:#22272e;
+  --txt:#e6edf3; --muted:#8b949e; --muted2:#6e7681;
+  --acc:#2dd4bf; --acc-dim:#1fa395; --acc-bg:rgba(45,212,191,.08);
+  --ok:#34d399; --warn:#f59e0b; --bad:#f85149; --inspect:#58a6ff; --rescue:#f0883e;
+  --fillbar-bg:#0e1319;
+}
+
+/* ── 2. 猫布丁·摩卡 (Catppuccin Mocha) ── */
+[data-theme="mocha"] {
+  --bg:#1e1e2e; --bg2:#181825; --card:#24283b; --card2:#2a2f45; --card-hi:#313244;
+  --line:#45475a; --line-soft:#3b3d52;
+  --txt:#cdd6f4; --muted:#a6adc8; --muted2:#7f849c;
+  --acc:#cba6f7; --acc-dim:#b4befe; --acc-bg:rgba(203,166,247,.08);
+  --ok:#a6e3a1; --warn:#f9e2af; --bad:#f38ba8; --inspect:#89b4fa; --rescue:#fab387;
+  --fillbar-bg:#181825;
+}
+
+/* ── 3. 北海 (Nord) ── */
+[data-theme="nord"] {
+  --bg:#2e3440; --bg2:#292e39; --card:#3b4252; --card2:#434c5e; --card-hi:#4c566a;
+  --line:#4c566a; --line-soft:#434c5e;
+  --txt:#eceff4; --muted:#d8dee9; --muted2:#a5b0c0;
+  --acc:#88c0d0; --acc-dim:#81a1c1; --acc-bg:rgba(136,192,208,.08);
+  --ok:#a3be8c; --warn:#ebcb8b; --bad:#bf616a; --inspect:#5e81ac; --rescue:#d08770;
+  --fillbar-bg:#292e39;
+}
+
+/* ── 4. 吸血鬼 (Dracula) ── */
+[data-theme="dracula"] {
+  --bg:#282a36; --bg2:#21222c; --card:#343746; --card2:#3e4152; --card-hi:#44475a;
+  --line:#4b4e63; --line-soft:#3e4152;
+  --txt:#f8f8f2; --muted:#b6bad0; --muted2:#8b8fa8;
+  --acc:#bd93f9; --acc-dim:#a77ee8; --acc-bg:rgba(189,147,249,.08);
+  --ok:#50fa7b; --warn:#f1fa8c; --bad:#ff5555; --inspect:#8be9fd; --rescue:#ffb86c;
+  --fillbar-bg:#21222c;
+}
+
+/* ── 5. 暖阳 (Gruvbox Light) ── */
+[data-theme="gruvbox"] {
+  --bg:#fbf1c7; --bg2:#f2e5bc; --card:#ebdbb2; --card2:#e0d5a8; --card-hi:#d5c99e;
+  --line:#bdae93; --line-soft:#d5c4a1;
+  --txt:#3c3836; --muted:#7c6f64; --muted2:#928374;
+  --acc:#b57614; --acc-dim:#8f5d0e; --acc-bg:rgba(181,118,20,.08);
+  --ok:#79740e; --warn:#b57614; --bad:#9d0006; --inspect:#427b58; --rescue:#af3a03;
+  --fillbar-bg:#f2e5bc;
+}
+
+/* ── 6. 东京夜 (Tokyo Night) ── */
+[data-theme="tokyo"] {
+  --bg:#1a1b26; --bg2:#16161e; --card:#1f2335; --card2:#252a3f; --card-hi:#2a3049;
+  --line:#3b4261; --line-soft:#2f354d;
+  --txt:#c0caf5; --muted:#8189af; --muted2:#565f89;
+  --acc:#7aa2f7; --acc-dim:#6a9ee8; --acc-bg:rgba(122,162,247,.08);
+  --ok:#9ece6a; --warn:#e0af68; --bad:#f7768e; --inspect:#7dcfff; --rescue:#ff9e64;
+  --fillbar-bg:#16161e;
+}
+
+/* ── 主题选择器 ── */
+.theme-picker{
+  position:relative;
+}
+.theme-menu{
+  position:absolute; bottom:calc(100% + 8px); left:0;
+  background:var(--card); border:1px solid var(--line); border-radius:10px;
+  padding:8px; min-width:180px; z-index:60;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+.theme-opt{
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px; border-radius:8px; cursor:pointer;
+  color:var(--txt); font-size:13px;
+}
+.theme-opt:hover{ background:var(--card-hi); }
+.theme-opt.active{ background:var(--acc-bg); border:1px solid var(--acc); }
+.theme-opt .swatch{
+  width:16px; height:16px; border-radius:4px; border:1px solid var(--line);
+  flex:none;
+}

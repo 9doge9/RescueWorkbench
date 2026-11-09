@@ -1,0 +1,18 @@
+数据抢救工作台 (RescueWorkbench)
+Copyright 2026 The RescueWorkbench Authors
+
+本产品包含以下第三方组件（各自适用其许可证，全文见 licenses/ 目录）：
+
+  * SectorForge (sf-cli.exe) — MIT License
+    https://github.com/terraseraph/sectorforge
+  * untrunc 及其随附 ffmpeg/MinGW 运行库 — GPL-2.0
+    https://github.com/anthwlock/untrunc
+  * smartmontools (smartctl.exe) — GPL-2.0+
+    https://www.smartmontools.org
+  * pywebview — BSD 3-Clause License
+  * Python — PSF License Agreement
+  * PyInstaller — GPL with bootloader exception
+
+主程序源码以 Apache License 2.0 发布（见 LICENSE）。
+上述 GPL 组件以独立子进程方式调用，构成聚合分发而非衍生作品；
+其源码可从各自官方仓库获取。

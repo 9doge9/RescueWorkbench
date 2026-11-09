@@ -1,0 +1,56 @@
+﻿[
+    {
+        "path":  "data.bin",
+        "size":  3145728,
+        "sha256":  "149c16f916321c1d8b98d9d9864e10b1a89e7e103fe03f3baaaa0d605b24b93a",
+        "deleted":  false
+    },
+    {
+        "path":  "del_root.txt",
+        "size":  58,
+        "sha256":  "fb0ed0b1a7f5b0ce1338a8312bc9215e5afaea7a0b54cbf1aa186bf20ec68bbb",
+        "deleted":  true
+    },
+    {
+        "path":  "我的 文档 (副本).txt",
+        "size":  37,
+        "sha256":  "fecec964b3b60bb70c542b78b161c3607bf3577a3b786dcc0a3d00de28ccbebc",
+        "deleted":  false
+    },
+    {
+        "path":  "文档/del_in_sub.txt",
+        "size":  50,
+        "sha256":  "06fad8fd7d4779c9cb44137402f74139ae0de6c2a801af7ff357ad0b982a9910",
+        "deleted":  true
+    },
+    {
+        "path":  "文档/说明.docx",
+        "size":  38182,
+        "sha256":  "230ede24c72d2b840a06406b9c025cd0b213b7524560b8d6bff8dd8fafb343c8",
+        "deleted":  false
+    },
+    {
+        "path":  "暂存/临时A.txt",
+        "size":  8,
+        "sha256":  "5b42629673473d5e3846e1b807ab01eff9a27fb3fd7c5baa3f8654371c179e6b",
+        "deleted":  true
+    },
+    {
+        "path":  "暂存/临时B.bin",
+        "size":  1048576,
+        "sha256":  "01a88ab07dc109bb5d550d0c59d0a487e8ec5c170c7fa82cda9b00a311ed15b0",
+        "deleted":  true
+    },
+    {
+        "path":  "深层/嵌套/目录/最深.txt",
+        "size":  34,
+        "sha256":  "7a1e5ef9b8b51874171539a07074bb4ac780f09c396944c96d1dce9e5076ba2a",
+        "deleted":  false
+    },
+    {
+        "path":  "照片/壁纸.jpg",
+        "size":  1602752,
+        "sha256":  "a37491a5e479e191cfe547b484426037455ce8aacff7ab15f91925330c24864f",
+        "deleted":  false
+    }
+]

@@ -1,0 +1,200 @@
+/* 主题变量由themes.css提供(6套方案), 这里只定义非色彩类变量 */
+:root{
+  --mono:"Cascadia Mono",Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;background:var(--bg2);color:var(--txt);font-size:14px;overflow:hidden}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.hidden{display:none!important}
+
+/* ── 布局骨架 ── */
+.app{display:flex;height:calc(100vh - 34px)}
+.sidebar{width:216px;flex:none;background:var(--bg);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow-y:auto}
+.main{flex:1;overflow-y:auto;padding:26px 30px 40px}
+.statusbar{height:34px;display:flex;align-items:center;gap:14px;padding:0 14px;background:var(--bg);border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+
+/* ── 侧边栏 ── */
+.brand{padding:18px 18px 14px;font-size:15px;font-weight:700}
+.brand-sub{display:block;font-size:10px;color:var(--muted2);font-weight:400;letter-spacing:.1em;margin-top:2px}
+.nav-group{padding:16px 18px 6px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--rescue)}
+.sidebar .nav-group:nth-of-type(2){color:var(--inspect)}
+.sidebar .nav-group:nth-of-type(3){color:var(--ok)}
+.nav-item{display:flex;gap:10px;align-items:center;padding:8px 12px;margin:1px 8px;border-radius:8px;color:var(--muted);cursor:pointer;border-left:3px solid transparent}
+.nav-item:hover{background:var(--card);color:var(--txt)}
+.nav-item.active{background:var(--card2);color:var(--txt);border-left-color:var(--acc)}
+.nav-item.active .nav-ico{filter:saturate(1.6)}
+.nav-ico{width:20px;text-align:center;font-size:15px}
+.nav-txt{font-size:13px;line-height:1.25}
+.nav-txt small{display:block;font-size:10px;color:var(--muted2)}
+.sidebar-foot{margin-top:auto;padding:12px 16px;border-top:1px solid var(--line-soft)}
+.src-info{font-size:11px;color:var(--muted2);font-family:var(--mono);word-break:break-all}
+
+/* ── 通用 ── */
+h1{font-size:22px;font-weight:600;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:13.5px}
+.micro{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.group-label{margin:22px 0 10px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.panel-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.head-meta{color:var(--muted);font-size:12px}
+.phase{color:var(--muted);font-size:13px;padding:6px 0}
+.btn{border:1px solid var(--line);background:var(--card2);color:var(--txt);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit}
+.btn:hover{border-color:var(--acc)}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#06251f;font-weight:600}
+.btn.primary:hover{background:#3ee0cb}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{color:var(--txt);border-color:var(--line)}
+.btn.mini{padding:4px 10px;font-size:12px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.txt{background:#0e1319;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit}
+select.txt{cursor:pointer}
+.form{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.form label{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+.form-row{display:flex;gap:12px}
+.actions{display:flex;gap:10px;align-items:center;margin:6px 0}
+.chk-line{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12.5px;cursor:pointer}
+.stat{color:var(--muted);font-size:12.5px;margin-top:10px;line-height:1.9;word-break:break-all}
+
+/* ── 进度条 ── */
+.prog{margin-top:14px;position:relative}
+.bar{height:26px;background:#0e1319;border:1px solid var(--line);border-radius:7px;overflow:hidden;position:relative}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--acc-dim),var(--acc));transition:width .5s;position:relative}
+.bar-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11.5px;color:#dff5f0;font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,.6);pointer-events:none;font-family:var(--mono)}
+
+/* ── 首页:设备卡 ── */
+.drive-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.drive{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--card2);cursor:pointer;transition:.15s}
+.drive:hover{background:var(--card-hi);border-color:#3a4250}
+.drive.sel{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.drive .d-name{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drive .d-path{font-family:var(--mono);font-size:11px;color:var(--muted);margin:3px 0}
+.drive .d-meta{font-size:12px;color:var(--muted)}
+.drive .d-badges{margin:6px 0 8px;display:flex;gap:6px;flex-wrap:wrap}
+.pill{display:inline-block;font-size:10.5px;padding:1px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.pill.sys{border-color:var(--bad);color:var(--bad)}
+.pill.fs{border-color:var(--inspect);color:var(--inspect)}
+.pill.rem{border-color:var(--ok);color:var(--ok)}
+.fillbar{height:10px;background:#0e1319;border-radius:5px;overflow:hidden;border:1px solid var(--line-soft)}
+.fillbar>div{height:100%;background:var(--acc-dim)}
+.d-live{color:var(--ok);font-size:11.5px;margin-top:6px}
+
+/* ── 首页:工具卡 ── */
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.tool-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;cursor:pointer;transition:.15s;position:relative}
+.tool-card:hover{background:var(--card-hi);border-color:#3a4250;transform:translateY(-1px)}
+.tool-card.plain{cursor:default}
+.tool-tag{display:inline-block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:4px;background:rgba(240,136,62,.12);color:var(--rescue);margin-bottom:10px}
+.tool-tag.inspect{background:rgba(88,166,255,.1);color:var(--inspect)}
+.tool-tag.recover{background:rgba(52,211,153,.1);color:var(--ok)}
+.tool-head{font-size:15px;font-weight:600;margin-bottom:6px}
+.tool-card p{color:var(--muted);font-size:12.5px;margin:0 0 8px;line-height:1.6}
+.use-when{font-size:12px;color:var(--muted2);margin-bottom:10px}
+.use-when b{color:var(--muted)}
+.cta{color:var(--acc);font-size:13px;font-weight:500}
+.tool-card:hover .cta{text-decoration:underline}
+.tips div{font-size:12px;color:var(--muted2);margin:7px 0;line-height:1.6}
+.tips b{color:var(--muted)}
+
+/* ── 表格(文件浏览器) ── */
+.tbl-wrap{max-height:max(calc(100vh - 420px), 180px);overflow:auto;border:1px solid var(--line-soft);border-radius:8px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{position:sticky;top:0;background:var(--card2);color:var(--muted);font-weight:500;font-size:11.5px;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);z-index:1}
+.tbl td{padding:7px 10px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+.tbl tr:hover td{background:var(--card-hi)}
+.tbl .fname-dir{color:var(--acc);cursor:pointer}
+.tbl .fname-dir:hover{text-decoration:underline}
+.tbl .tsize{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.tbl .ttime{color:var(--muted2);font-family:var(--mono);font-size:11.5px}
+.pill.st-del{border-color:var(--warn);color:var(--warn)}
+.pill.rec-full{border-color:var(--ok);color:var(--ok)}
+.pill.rec-partial{border-color:var(--warn);color:var(--warn)}
+.pill.rec-none{border-color:var(--muted2);color:var(--muted2)}
+.pill.orphan{border-color:var(--inspect);color:var(--inspect);margin-left:4px}
+.crumb{font-weight:600;font-size:14px}
+.crumb span{cursor:pointer}
+.crumb span:hover{color:var(--acc)}
+.crumb .sep{color:var(--muted2);margin:0 4px}
+.extract-bar{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.extract-to{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12.5px;margin-left:auto}
+
+/* ── 体检裁决 ── */
+.verdict{margin-top:10px;padding:14px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card2);font-size:13px;line-height:2}
+.verdict.ok{border-color:var(--ok);background:rgba(52,211,153,.05)}
+.verdict.bad{border-color:var(--bad);background:rgba(248,81,73,.05)}
+
+/* ── 状态栏/控制台 ── */
+.console-chip{display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--line);border-radius:999px;color:var(--txt);font-size:12px;padding:2px 12px;cursor:pointer;font-family:inherit}
+.badge{background:rgba(45,212,191,.15);color:var(--acc);border-radius:999px;padding:0 7px;font-size:11px}
+.status-text{flex:1}
+.mode-hint{color:var(--muted2)}
+.mode-hint b{color:var(--acc);font-weight:500}
+.console{position:fixed;bottom:34px;left:0;right:0;height:220px;background:rgba(13,15,18,.97);border-top:1px solid var(--line);z-index:50}
+.console-inner{height:100%;overflow-y:auto;padding:10px 16px;font-size:11.5px;color:var(--muted);line-height:1.7;white-space:pre-wrap}
+
+/* ── 结果页 ── */
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:13px}
+.kv b{color:var(--muted);font-weight:400}
+.vres{background:#0e1319;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:12.5px;line-height:1.9;white-space:pre-wrap;margin-top:10px}
+code{background:#0e1319;padding:1px 6px;border-radius:5px;font-size:11.5px}
+
+/* ── 健康地图 ── */
+.mapbox{margin-top:14px;padding:12px 14px;background:var(--card2);border:1px solid var(--line);border-radius:10px}
+#mapCanvas{width:100%;height:26px;display:block;border-radius:5px;background:#0e1319}
+.map-legend{margin-left:auto;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.map-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 2px 0 8px}
+
+/* ── 缩略图/灯箱 ── */
+.fimg{cursor:zoom-in;display:inline-flex;align-items:center;gap:8px;min-width:0}
+.fimg .thumb{width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid var(--line);flex:none;background:#0e1319}
+.fimg .fn-txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fimg:hover .thumb{border-color:var(--acc)}
+.fimg.imgfail{cursor:default}
+.lightbox{position:fixed;inset:0;background:rgba(5,8,12,.92);z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:zoom-out}
+.lightbox img{max-width:92vw;max-height:82vh;border-radius:8px;box-shadow:0 8px 60px rgba(0,0,0,.6)}
+.lightbox .lb-meta{color:var(--muted);font-size:13px;margin-bottom:12px;font-family:var(--mono)}
+
+.lightbox .lb-nav{display:flex;align-items:center;gap:12px;margin-top:12px}
+.lightbox .lb-nav .btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15)}
+.lightbox .lb-nav .btn:hover{background:rgba(255,255,255,.15)}
+.lightbox .lb-count{color:#8b949e;font-size:13px}
+
+/* ── toast ── */
+.toast{position:fixed;bottom:46px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--acc);padding:9px 20px;border-radius:10px;font-size:13px;z-index:99}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#2c3440;border-radius:5px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ── 响应式: 窄窗口/低分屏 ── */
+@media (max-width: 1100px){
+  .tool-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .drive-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .main{padding:18px 18px 32px}
+  .form-row{flex-direction:column;gap:8px}
+}
+@media (max-width: 920px){
+  /* 侧栏收缩为纯图标模式 */
+  .sidebar{width:56px}
+  .brand{padding:14px 8px;font-size:16px;text-align:center}
+  .brand-sub,.nav-txt small,.sidebar-foot{display:none}
+  .nav-txt{font-size:0}
+  .nav-group{font-size:8px;text-align:center;padding:12px 4px 4px;letter-spacing:0}
+  .nav-item{justify-content:center;padding:9px 4px}
+  .nav-ico{width:auto;font-size:17px}
+  h1{font-size:19px}
+  .extract-to{margin-left:0;width:100%}
+  .extract-to input{flex:1}
+}
+@media (max-height: 700px){
+  .main{padding:14px 16px 24px}
+  h1{font-size:18px;margin-bottom:4px}
+  .sub{margin-bottom:12px}
+  .panel{padding:12px 14px;margin-bottom:12px}
+  .tool-card{padding:12px}
+}
+
+/* ── 空状态 ── */
+.empty-state{text-align:center;padding:32px 16px;color:var(--muted)}
+.empty-state .empty-ico{font-size:36px;margin-bottom:10px;opacity:.6}
+.empty-state .empty-sub{font-size:12.5px;color:var(--muted2);margin-top:4px}

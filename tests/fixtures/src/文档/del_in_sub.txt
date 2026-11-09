@@ -1,0 +1,2 @@
+子目录中的待删文件
+sub folder del target

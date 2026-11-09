@@ -1,0 +1,192 @@
+{
+ "families": [
+  {
+   "name": "WannaCry",
+   "exts": [
+    ".wnry",
+    ".wcry",
+    ".wncry"
+   ],
+   "notes": [
+    "wanadecryptor"
+   ],
+   "keywords": [
+    "wanadecryptor",
+    "wannacry"
+   ],
+   "decryptor": "XP-era free decryptor exists"
+  },
+  {
+   "name": "Locky",
+   "exts": [
+    ".locky",
+    ".zepto",
+    ".odin",
+    ".thor",
+    ".bart"
+   ],
+   "notes": [
+    "_locky_recover_instructions"
+   ],
+   "keywords": [
+    "locky"
+   ],
+   "decryptor": "no free decryptor"
+  },
+  {
+   "name": "Cerber",
+   "exts": [
+    ".cerber",
+    ".cerber2",
+    ".cerber3"
+   ],
+   "notes": [
+    "# decrypt my files #"
+   ],
+   "keywords": [
+    "cerber"
+   ],
+   "decryptor": "no free decryptor"
+  },
+  {
+   "name": "GandCrab",
+   "exts": [
+    ".gandcrab",
+    ".gdcb",
+    ".krab"
+   ],
+   "notes": [
+    "krab-decryptor"
+   ],
+   "keywords": [
+    "gandcrab"
+   ],
+   "decryptor": "FREE decryptor by Bitdefender - try first"
+  },
+  {
+   "name": "STOP/Djvu",
+   "exts": [
+    ".djvu",
+    ".nesa",
+    ".mogera",
+    ".gero",
+    ".make",
+    ".peta",
+    ".npsg",
+    ".tovu"
+   ],
+   "notes": [
+    "_readme.txt",
+    "_open_.txt"
+   ],
+   "keywords": [
+    "stop djvu",
+    "djvu"
+   ],
+   "decryptor": "PARTIAL free decryptor by Emsisoft (offline keys)"
+  },
+  {
+   "name": "Phobos",
+   "exts": [
+    ".phobos",
+    ".actin",
+    ".actor",
+    ".helper"
+   ],
+   "notes": [
+    "info.txt",
+    "restore_files.txt"
+   ],
+   "keywords": [
+    "phobos"
+   ],
+   "decryptor": "no free decryptor"
+  },
+  {
+   "name": "Dharma/CES",
+   "exts": [
+    ".dharma",
+    ".ces",
+    ".bip",
+    ".bkp"
+   ],
+   "notes": [
+    "files encrypted.txt"
+   ],
+   "keywords": [
+    "dharma"
+   ],
+   "decryptor": "no free decryptor"
+  },
+  {
+   "name": "Makop",
+   "exts": [
+    ".makop"
+   ],
+   "notes": [
+    "readme-warning.txt"
+   ],
+   "keywords": [
+    "makop"
+   ],
+   "decryptor": "no free decryptor"
+  },
+  {
+   "name": "Ryuk",
+   "exts": [
+    ".ryk"
+   ],
+   "notes": [
+    "ryukreadme"
+   ],
+   "keywords": [
+    "ryuk"
+   ],
+   "decryptor": "no free decryptor"
+  },
+  {
+   "name": "REvil",
+   "exts": [],
+   "notes": [
+    "ransom.reviltn"
+   ],
+   "keywords": [
+    "sodinokibi",
+    "revil"
+   ],
+   "decryptor": "some leaked keys"
+  }
+ ],
+ "note_names": [
+  "readme_to_decrypt",
+  "how_to_decrypt",
+  "how_to_recover",
+  "how_to_restore",
+  "restore_files",
+  "decrypt_files",
+  "help_decrypt",
+  "help_restore",
+  "ransom",
+  "recover_instructions",
+  "readme_warning",
+  "files_encrypted",
+  "restore-my-files",
+  "all_your_files_have_been_encrypted",
+  "readme_how_to_decrypt",
+  "readme-to-decrypt",
+  "how-to-decrypt",
+  "how-to-recover",
+  "how-to-restore",
+  "restore-files",
+  "decrypt-files",
+  "help-decrypt",
+  "help-restore",
+  "ransom",
+  "recover-instructions",
+  "readme-warning",
+  "files-encrypted",
+  "restore-my-files",
+  "all-your-files-have-been-encrypted",
+  "readme-how-to-decrypt"
+ ]
+}

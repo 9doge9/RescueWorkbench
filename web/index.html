@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>数据抢救工作台</title>
+<link rel="stylesheet" href="themes.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ═══ 侧边栏 ═══ -->
+  <aside class="sidebar">
+    <div class="brand">🛟 数据抢救工作台 <span class="brand-sub">便携版</span></div>
+    <nav>
+      <a class="nav-item active" data-page="home">
+        <span class="nav-ico">🏠</span>
+        <span class="nav-txt">首页<small>设备与工具</small></span>
+      </a>
+      <div class="nav-group">抢救</div>
+      <a class="nav-item" data-page="probe"><span class="nav-ico">🩺</span><span class="nav-txt">体检<small>盘还诚实吗</small></span></a>
+      <a class="nav-item" data-page="image"><span class="nav-ico">💾</span><span class="nav-txt">镜像<small>先保住现场</small></span></a>
+      <div class="nav-group">检查</div>
+      <a class="nav-item" data-page="partitions"><span class="nav-ico">🗂️</span><span class="nav-txt">分区<small>找到文件系统</small></span></a>
+      <a class="nav-item" data-page="verify"><span class="nav-ico">#️⃣</span><span class="nav-txt">校验<small>SHA-256比对</small></span></a>
+      <div class="nav-group">恢复</div>
+      <a class="nav-item" data-page="recover"><span class="nav-ico">📁</span><span class="nav-txt">恢复文件<small>原名+文件夹</small></span></a>
+      <a class="nav-item" data-page="wxdat"><span class="nav-ico">💬</span><span class="nav-txt">微信dat解密<small>聊天图片还原</small></span></a>
+      <div class="nav-group">记录</div>
+      <a class="nav-item" data-page="mp4repair"><span class="nav-ico">🎬</span><span class="nav-txt">视频修复<small>断电MP4重建</small></span></a>
+      <div class="nav-group">分析</div>
+      <a class="nav-item" data-page="content"><span class="nav-ico">🔎</span><span class="nav-txt">内容特征<small>EXIF/残留/加密</small></span></a>
+      <a class="nav-item" data-page="harvest"><span class="nav-ico">📦</span><span class="nav-txt">成果总览<small>恢复了什么·在哪</small></span></a>
+      <a class="nav-item" data-page="history"><span class="nav-ico">📋</span><span class="nav-txt">操作历史<small>全部任务记录</small></span></a>
+      <a class="nav-item" data-page="about"><span class="nav-ico">ℹ️</span><span class="nav-txt">关于<small>版本·致谢·许可</small></span></a>
+    </nav>
+    <div class="sidebar-foot">
+      <div id="srcInfo" class="src-info">未选择源</div>
+      <div class="theme-picker" id="themePicker" style="margin-top:10px">
+        <button class="btn mini" style="width:100%;justify-content:center;display:flex;align-items:center;gap:6px" onclick="toggleThemeMenu()">
+          <span id="curThemeSwatch" style="width:12px;height:12px;border-radius:3px;background:var(--acc);display:inline-block;border:1px solid var(--line)"></span>
+          <span id="curThemeName">深空</span>
+        </button>
+        <div class="theme-menu hidden" id="themeMenu"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ 主区 ═══ -->
+  <main class="main">
+
+    <!-- 首页 -->
+    <section class="page" id="page-home">
+      <h1>从损坏或濒死的盘里抢救数据</h1>
+      <p class="sub">全程只读源盘；输出绝不落在源盘上；先克隆再恢复。</p>
+
+      <div class="panel" id="scenePanel">
+        <div class="panel-head"><span class="micro">🆘 你出了什么事？</span><span class="head-meta">按事故直达 · 熟手继续用左侧功能导航，全都在</span></div>
+        <div class="tool-grid" id="sceneGrid"></div>
+      </div>
+
+      <div class="panel" id="nextStepsPanel" style="display:none">
+        <div class="panel-head"><span class="micro">🧭 下一步建议</span><span class="head-meta">按当前进度动态推荐</span></div>
+        <div id="nextSteps" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="micro">本机设备</span>
+          <span class="head-meta" id="driveStats">…</span>
+          <button class="btn ghost mini" onclick="loadDevices()">↻ 刷新</button>
+        </div>
+        <div class="drive-grid" id="devList"><div class="phase">读取中…</div></div>
+      </div>
+
+      <div class="micro group-label">工具</div>
+      <div class="tool-grid">
+        <div class="tool-card" onclick="go('probe')">
+          <div class="tool-tag rescue">体检</div>
+          <div class="tool-head">🩺 读稳定性体检</div>
+          <p>定点重复读 + 流式对比，识别"说谎的主控"和弱单元。</p>
+          <div class="use-when"><b>何时用：</b>接手任何坏盘的第一步，决定镜像策略。</div>
+          <div class="cta">开始体检 →</div>
+        </div>
+        <div class="tool-card" onclick="go('image')">
+          <div class="tool-tag rescue">抢救</div>
+          <div class="tool-head">💾 整盘镜像</div>
+          <p>快速(ddrescue两遍)或校验式(双句柄抽检+二分坏区)，断点续跑。</p>
+          <div class="use-when"><b>何时用：</b>盘在恶化、需要逐字节保现场时。</div>
+          <div class="cta">开始镜像 →</div>
+        </div>
+        <div class="tool-card" onclick="go('partitions')">
+          <div class="tool-tag inspect">检查</div>
+          <div class="tool-head">🗂️ 分区扫描</div>
+          <p>分区表 + 深度签名扫描，找回被删分区和丢失文件系统。</p>
+          <div class="use-when"><b>何时用：</b>盘显示RAW、分区不见时。</div>
+          <div class="cta">扫描分区 →</div>
+        </div>
+        <div class="tool-card" onclick="go('recover')">
+          <div class="tool-tag recover">恢复</div>
+          <div class="tool-head">📁 文件恢复</div>
+          <p>真名+文件夹树+已删文件，逐文件可恢复性标注，勾选提取。</p>
+          <div class="use-when"><b>何时用：</b>文件系统可读时的首选恢复方式。</div>
+          <div class="cta">恢复文件 →</div>
+        </div>
+        <div class="tool-card" onclick="go('recover'); setTimeout(()=>toast('在恢复页选「签名雕刻」标签'),300)">
+          <div class="tool-tag recover">恢复</div>
+          <div class="tool-head">🧩 签名雕刻</div>
+          <p>不依赖文件系统，按内容特征找回（无原名），94种格式。</p>
+          <div class="use-when"><b>何时用：</b>文件系统损坏严重时兜底。</div>
+          <div class="cta">开始雕刻 →</div>
+        </div>
+        <div class="tool-card plain">
+          <div class="tool-tag">须知</div>
+          <div class="tips">
+            <div><b>只读源盘。</b>工具绝不写源盘，输出落源盘会被拒绝。</div>
+            <div><b>在副本上干活。</b>一切恢复都对着镜像做，坏了随时重来。</div>
+            <div><b>随时可停。</b>镜像进度每5秒落盘，中断后重跑即续传。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 驱动器详情 -->
+    <section class="page hidden" id="page-drive">
+      <h1 id="drvTitle">驱动器</h1>
+      <p class="sub">点击下方操作开始；体检永远是无损第一步。</p>
+      <div class="panel">
+        <div class="panel-head"><span class="micro">设备信息</span></div>
+        <div class="kv" id="drvInfo"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="micro">分区（启动快扫）</span></div>
+        <div id="drvParts" class="muted" style="font-size:13px"></div>
+      </div>
+      <div class="panel hidden" id="drvSmart">
+        <div class="panel-head"><span class="micro">SMART 健康</span><span class="head-meta">smartctl 7.4 · 需管理员</span></div>
+        <div id="smartBody"></div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" onclick="go('probe'); startProbe()">🩺 开始体检</button>
+        <button class="btn" onclick="go('image')">💾 直接镜像</button>
+        <button class="btn ghost" onclick="go('home')">← 返回设备列表</button>
+      </div>
+    </section>
+
+    <!-- 体检 -->
+    <section class="page hidden" id="page-probe">
+      <h1>读稳定性体检</h1>
+      <p class="sub">判断这块盘是否"诚实"——读取成功但数据漂移的盘必须用校验式镜像。</p>
+      <div class="panel" id="exfatPanel">>
+        <div class="panel-head"><span class="micro">体检对象</span><span class="head-meta" id="probeSrc">未选择</span></div>
+        <div id="probeBox">
+          <div class="phase" id="probePhase">在首页选择设备后自动开始。</div>
+          <div id="probeVerdict" class="verdict hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 镜像 -->
+    <section class="page hidden" id="page-image">
+      <h1>整盘镜像</h1>
+      <p class="sub">把源盘逐字节拷到安全位置，产出 ddrescue 兼容 map；之后所有恢复都在镜像上做。</p>
+      <div class="panel" id="raidPanel">>
+        <div class="panel-head"><span class="micro">镜像任务</span><span class="head-meta" id="imgSrc">未选择</span></div>
+        <div class="form">
+          <label>镜像保存到 <input id="imgDest" class="txt mono" style="flex:1" placeholder="其他盘上的位置，如 D:\抢救\disk.img">
+            <button class="btn mini" onclick="chooseFolder('imgDest')">浏览…</button></label>
+          <div class="form-row">
+            <label style="flex:1">策略
+              <select id="imgMode" class="txt">
+                <option value="auto">自动（按体检结果）</option>
+                <option value="fast">快速 · ddrescue两遍式</option>
+                <option value="verified">校验式 · 双句柄抽检+二分坏区</option>
+              </select></label>
+            <label style="flex:1">读取通道
+              <select id="imgAccess" class="txt">
+                <option value="">系统驱动</option>
+                <option value="scsi">SCSI直读</option>
+                <option value="ata">ATA直读</option>
+              </select></label>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="imgStart" onclick="startImage()">开始镜像</button>
+          <button class="btn" onclick="startImage(true)">🔁 重试坏区（仅第二遍）</button>
+          <label class="chk-line" id="revWrap"><input type="checkbox" id="imgReverse"> 反向（从盘尾拷起，仅快速模式）</label>
+          <button class="btn hidden" id="imgCancel" onclick="cancelJob(S.imageJob)">停止</button>
+        </div>
+        <div id="imgProg" class="prog hidden">
+          <div class="bar"><div id="imgBar" class="fill"></div><span id="imgBarLabel" class="bar-label"></span></div>
+          <div id="imgStat" class="stat"></div>
+        </div>
+        <div id="mapBox" class="mapbox hidden">
+          <div class="panel-head" style="margin-bottom:8px">
+            <span class="micro">健康地图</span>
+            <span class="head-meta" id="mapTotals"></span>
+            <span class="map-legend">
+              <i style="background:#2dd4bf"></i>已救 <i style="background:#f85149"></i>坏区
+              <i style="background:#f59e0b"></i>处理中 <i style="background:#30363d"></i>未试
+            </span>
+          </div>
+          <canvas id="mapCanvas" height="26"></canvas>
+        </div>
+        <div id="speedBox" class="mapbox hidden">
+          <div class="panel-head" style="margin-bottom:8px">
+            <span class="micro">速度热力图</span>
+            <span class="head-meta" id="speedStat"></span>
+            <span class="map-legend">
+              <i style="background:#2ddc50"></i>快 <i style="background:#dcd250"></i>中
+              <i style="background:#f85149"></i>慢（弱单元区）
+            </span>
+          </div>
+          <canvas id="speedCanvas" height="22"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- 分区 -->
+    <section class="page hidden" id="page-partitions">
+      <h1>分区扫描</h1>
+      <p class="sub">读取分区表；深度模式全盘签名搜索被删/丢失的分区。</p>
+      <div class="panel" id="vmPanel">>
+        <div class="actions">
+          <button class="btn primary" onclick="startScan()">🔍 扫描源</button>
+          <label class="chk-line"><input type="checkbox" id="deepScan" checked> 深度签名扫描（慢，全盘）</label>
+        </div>
+        <div id="scanOut" class="muted"></div>
+      </div>
+      <div class="panel" id="vmPanel">
+        <div class="panel-head"><span class="micro">虚拟磁盘 · VMDK/VHD/VHDX</span><span class="head-meta">虚拟机盘 → raw → 全链路恢复</span></div>
+        <p class="sub" style="margin:6px 0">删除的虚拟机/快照盘里是完整的NTFS/ext4卷。fixed VHD 与 flat VMDK 本身就是raw可直接用；<b>dynamic VHD / sparse VMDK</b> 是稀疏存储，先展开成 raw（洞=零、稀疏写），再跑分区扫描。VHDX v1 仅识别。</p>
+        <div class="actions">
+          <label class="extract-to">盘文件 <input id="vmFile" class="txt mono" style="width:300px">
+            <button class="btn mini" onclick="chooseFile('vmFile')">浏览…</button></label>
+          <button class="btn" onclick="vmDetect()">🔍 检测</button>
+          <button class="btn primary" onclick="startVmExpand()">📦 展开为raw并设为镜像</button>
+        </div>
+        <div id="vmOut" class="stat"></div>
+      </div>
+
+      <div class="panel" id="raidPanel">
+        <div class="panel-head"><span class="micro">RAID重组 · NAS/服务器阵列</span><span class="head-meta">RAID0/1/5 · 自动检测参数 · 缺盘可降级重建</span></div>
+        <p class="sub" style="margin:6px 0">RAID卡坏/阵列被拆后，用<b>各成员盘的镜像</b>重组虚拟盘：自动检测级别(RAID0/1/5)×条带大小×盘序×布局(四种经典)，按MBR/GPT/分区魔数打分。RAID5 缺一块盘也能用其余盘 XOR 重建。重组出的 raw 自动设为当前镜像接全链路。</p>
+        <div class="form" style="margin:6px 0">
+          <textarea id="raidMembers" class="txt mono" rows="3" style="width:100%;resize:vertical" placeholder="成员盘镜像路径，每行一个&#10;缺失的盘留空行占位（仅RAID5）"></textarea>
+        </div>
+        <div class="actions">
+          <button class="btn primary" onclick="startRaidRebuild()">🧱 检测+重组</button>
+        </div>
+        <div id="raidOut" class="stat"></div>
+      </div>
+    </section>
+
+    <!-- 校验 -->
+    <section class="page hidden" id="page-verify">
+      <h1>SHA-256 校验</h1>
+      <p class="sub">对镜像或源计算哈希，确认两份拷贝完全一致。</p>
+      <div class="panel" id="h264Panel">>
+        <div class="form">
+          <label>目标 <input id="hashTarget" class="txt mono" style="flex:1" placeholder="镜像文件路径"></label>
+        </div>
+        <div class="actions"><button class="btn primary" onclick="startHash()">计算哈希</button></div>
+        <div id="hashOut" class="stat mono"></div>
+      </div>
+    </section>
+
+    <!-- 恢复 -->
+    <section class="page hidden" id="page-recover">
+      <h1>恢复文件</h1>
+      <p class="sub">按文件系统列出（含已删），勾选提取；文件系统没救了就用签名雕刻。</p>
+
+      <div class="panel" id="hfsPanel">>
+        <div class="panel-head">
+          <span class="micro">数据源</span>
+          <select id="partSel" class="txt mono" style="max-width:420px"></select>
+          <button class="btn primary mini" onclick="startFiles()">列出文件</button>
+          <button class="btn hidden" id="filesStop" onclick="cancelJob(S.filesJob)">停止</button>
+        </div>
+        <label class="chk-line"><input type="checkbox" id="onlyDeleted"> 只看已删（大卷更快）</label>
+        <div id="filesPhase" class="phase hidden"></div>
+      </div>
+
+      <div class="panel hidden" id="browserPanel">
+        <div class="panel-head">
+          <span class="crumb" id="crumb"></span>
+          <input id="fileSearch" class="txt" style="width:180px" placeholder="按名称搜索" oninput="renderTable()">
+          <label class="chk-line mini"><input type="checkbox" id="fDeleted" onchange="renderTable()"> 已删</label>
+          <label class="chk-line mini"><input type="checkbox" id="fRecoverable" onchange="renderTable()"> 仅可恢复</label>
+          <span class="head-meta" id="itemsMeta"></span>
+        </div>
+        <div class="tbl-wrap"><table class="tbl" id="fileTable"></table></div>
+        <div class="extract-bar">
+          <span class="muted" id="selInfo">未勾选。勾选要恢复的文件或文件夹。</span>
+          <button class="btn ghost mini" onclick="clearSel()">清除勾选</button>
+          <label class="extract-to">提取到 <input id="extractOut" class="txt mono" style="width:280px">
+            <button class="btn mini" onclick="chooseFolder('extractOut')">浏览…</button></label>
+          <button class="btn primary" onclick="startExtract()">📤 提取选中</button>
+        </div>
+      </div>
+
+      <div class="panel" id="carvePanel">
+        <div class="panel-head"><span class="micro">兜底 · 签名雕刻</span><span class="head-meta">94种格式 · 无原名</span></div>
+        <div class="actions">
+          <button class="btn primary" onclick="startCarve()">🧩 开始雕刻</button>
+          <label class="chk-line" id="carveRangeWrap"><input type="checkbox" id="carveRange" checked> 仅所选分区范围（更快）</label>
+          <label class="chk-line"><input type="checkbox" id="carveFree"> 仅未分配空间（找已删 · 需文件系统可读）</label>
+          <button class="btn ghost mini" onclick="allocPreview()">🔍 预筛分析</button>
+        </div>
+        <div id="carveOut" class="stat"></div>
+      </div>
+
+      <div class="panel" id="h264Panel">
+        <div class="panel-head"><span class="micro">兜底 · 监控裸流雕刻</span><span class="head-meta">海康/大华等 · H.264/H.265无容器流</span></div>
+        <p class="sub" style="margin:6px 0">监控录像损坏后常只剩裸流（无文件名无容器）。按参数集+关键帧序列扫描，输出可播放文件。<b>裸流原件始终保留</b>，重封装MP4为尽力而为（B帧顺序可能不完美）。</p>
+        <div class="actions">
+          <button class="btn primary" onclick="startH264Carve()">📹 裸流雕刻</button>
+          <label class="chk-line">最小流大小 <input id="h264MinKb" type="number" value="64" min="1" style="width:70px"> KB（过小易误报）</label>
+        </div>
+        <div id="h264Out" class="stat"></div>
+      </div>
+
+      <div class="panel" id="hfsPanel">
+        <div class="panel-head"><span class="micro">深度 · Mac盘 HFS+</span><span class="head-meta">目录树+提取 · APFS仅识别</span></div>
+        <p class="sub" style="margin:6px 0">Mac老格式盘(H+/HX)：catalog B树遍历出<b>原名+路径+大小</b>并按 extent 提取。HFS+ 无显式已删标记——catalog 残留记录会一并列出。APFS(Mac 10.13+)体量大，v1 仅识别容器。</p>
+        <div class="actions">
+          <button class="btn primary" onclick="startHfsList()">🍎 列出文件</button>
+          <label class="chk-line"><input type="checkbox" id="hfsExtract"> 同时提取全部</label>
+        </div>
+        <div id="hfsOut" class="stat"></div>
+      </div>
+
+      <div class="panel" id="exfatDeepPanel">
+        <div class="panel-head"><span class="micro">深度 · exFAT已删挖掘</span><span class="head-meta">全簇扫描 · 已删条目+孤儿目录</span></div>
+        <p class="sub" style="margin:6px 0">比目录树遍历更深：整目录删除后的<b>孤儿目录簇</b>、被覆盖旁路下的<b>已删条目集</b>都能挖出（原名+大小+时间）。目录项按规范 NameHash/SetChecksum 双校验。</p>
+        <div class="actions">
+          <button class="btn primary" onclick="startExfatDeep()">🗂️ 深度扫描</button>
+          <label class="chk-line"><input type="checkbox" id="exfatExtract"> 扫描后直接提取全部</label>
+        </div>
+        <div id="exfatOut" class="stat"></div>
+      </div>
+
+      <div class="panel" id="ext4Panel">
+        <div class="panel-head"><span class="micro">深度 · ext4日志挖掘</span><span class="head-meta">Linux/NAS · JBD2事务+已删文件</span></div>
+        <p class="sub" style="margin:6px 0">ext4 的 JBD2 日志里存着旧版目录块与 inode 表块——<b>已删文件的名字+大小+数据位置</b>常完整躺在里面。同时报告崩溃尾巴（有描述符无 commit 的未提交事务=掉电现场）。</p>
+        <div class="actions">
+          <button class="btn primary" onclick="startExt4Journal()">🐧 日志挖掘</button>
+          <label class="chk-line"><input type="checkbox" id="ext4Recover"> 同时恢复"已删但有日志副本"的文件</label>
+        </div>
+        <div id="ext4Out" class="stat"></div>
+      </div>
+    </section>
+
+    <!-- 微信dat解密 -->
+    <section class="page hidden" id="page-wxdat">
+      <h1>微信图片 dat 解密</h1>
+      <p class="sub">微信PC端缓存的聊天图片是单字节异或加密的 .dat——按图片头特征自动还原为 jpg/png/gif 等，保持原目录结构。</p>
+      <div class="panel">
+        <div class="form">
+          <label>dat所在目录
+            <input id="wxIn" class="txt mono" style="flex:1" placeholder="如 D:\恢复输出\...\FileStorage\Image">
+            <button class="btn mini" onclick="chooseFolder('wxIn')">浏览…</button></label>
+          <label>解密输出到
+            <input id="wxOut" class="txt mono" style="flex:1" placeholder="选一个空目录">
+            <button class="btn mini" onclick="chooseFolder('wxOut')">浏览…</button></label>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="wxStart" onclick="startWxdat()">💬 开始解密</button>
+        </div>
+        <div id="wxStat" class="stat"></div>
+        <div id="wxResult"></div>
+      </div>
+      <div class="panel plain-hint">
+        <div class="tips">
+          <div><b>从哪找dat：</b>恢复结果里的 <code>FileStorage\Image</code> 或 <code>MsgAttach</code> 目录；深度雕刻出的dat也能解。</div>
+          <div><b>原理：</b>dat头 XOR 已知图片magic（JPG/PNG/GIF/BMP/WebP）反推密钥，整文件异或还原；探测不中的会如实跳过。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 内容特征分析 -->
+    <section class="page hidden" id="page-content">
+      <h1>内容特征分析</h1>
+      <p class="sub">对<b>已恢复的目录</b>或镜像做内容级挖掘：照片EXIF归档、SQLite已删记录、Base64内嵌文件、事件日志时间线、加密卷检测。</p>
+      <div class="panel">
+        <div class="panel-head"><span class="micro">📸 照片整理 · EXIF</span><span class="head-meta">拍摄时间重命名+按月归档</span></div>
+        <div class="actions">
+          <label class="extract-to">目录 <input id="ctDir" class="txt mono" style="width:300px">
+            <button class="btn mini" onclick="chooseFolder('ctDir')">浏览…</button></label>
+          <button class="btn primary" onclick="startContent('exifscan')">📸 扫描EXIF</button>
+          <button class="btn" onclick="organizeExif()">📁 按拍摄时间归档</button>
+        </div>
+        <div id="ctExif" class="stat"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="micro">💾 SQLite残留</span><span class="head-meta">聊天记录/浏览器历史 · 自由页已删数据</span></div>
+        <p class="sub" style="margin:6px 0">明文库列出表和行数并挖自由页；加密库（新版微信WCDB）如实标注。注意：自由页里的中文片段是已删消息的残骸，无结构。</p>
+        <div class="actions">
+          <button class="btn primary" onclick="startContent('sqlscan')">💾 分析目录</button>
+          <button class="btn" onclick="startContent('sqlscan_img')">🧩 从当前镜像雕刻</button>
+        </div>
+        <div id="ctSql" class="stat"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="micro">🍞 Base64内嵌</span><span class="head-meta">文本/日志/导出里的图片压缩包</span></div>
+        <div class="actions">
+          <button class="btn primary" onclick="startContent('b64scan')">🍞 提取内嵌文件</button>
+        </div>
+        <div id="ctB64" class="stat"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="micro">📋 事件日志 evtx</span><span class="head-meta">取证时间线 · 常见事件ID对照(登录/USB/服务安装)</span></div>
+        <div class="actions">
+          <label class="chk-line">目录同上（一般指向 <code>C:\Windows\System32\winevt\Logs</code>，需拷出来再扫）</label>
+          <button class="btn primary" onclick="startContent('evlogscan')">📋 解析evtx</button>
+        </div>
+        <div id="ctEv" class="stat"></div>
+      </div>
+      <div class="panel" id="ransomPanel">>
+        <div class="panel-head"><span class="micro">🦠 勒索现场检测</span><span class="head-meta">家族识别 · 证据链 · 免费解密器线索</span></div>
+        <p class="sub" style="margin:6px 0">对<b>目录同上</b>：勒索信特征 + 异常扩展名统计 + 高熵占比 → 家族猜测与处置建议。检测不出家族≠安全（常见家族子集，如实标注）。</p>
+        <div class="actions">
+          <button class="btn primary" onclick="startContent('ransomscan')">🦠 检测勒索痕迹</button>
+        </div>
+        <div id="ctRansom" class="stat"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="micro">📧 PST/OST 检查</span><span class="head-meta">Outlook邮箱文件 · 结构体检 + 头损兜底</span></div>
+        <p class="sub" style="margin:6px 0">Outlook 的 PST/OST：结构体检（两棵B树走查 → 目录/邮件/孤儿/缺块统计）；<b>头损时全盘扫描描述叶页找回邮件清单</b>。v1 为结构级检查（不解析正文），全量导出建议 readpst。</p>
+        <div class="actions">
+          <label class="extract-to">文件 <input id="pstFile" class="txt mono" style="width:300px">
+            <button class="btn mini" onclick="chooseFile('pstFile')">浏览…</button></label>
+          <button class="btn primary" onclick="startPstCheck()">📧 检查</button>
+        </div>
+        <div id="pstOut" class="stat"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="micro">🧩 CHK文件识别</span><span class="head-meta">chkdsk的FOUND.00X产物 · 魔数拆分</span></div>
+        <p class="sub" style="margin:6px 0">chkdsk 把丢失簇存成 FILE0001.CHK——里面常是完整文件或多文件拼接。按魔数识别类型并<b>拆分提取</b>（JPG/ZIP/PNG/PDF/MP4等可精确定界）。</p>
+        <div class="actions">
+          <button class="btn primary" onclick="startContent('chkscan')">🧩 识别CHK</button>
+          <label class="chk-line"><input type="checkbox" id="chkExtract"> 识别后直接拆分提取</label>
+        </div>
+        <div id="ctChk" class="stat"></div>
+      </div>
+      <div class="panel" id="blPanel">>
+        <div class="panel-head"><span class="micro">🔐 加密检测/解锁</span><span class="head-meta">BitLocker/LUKS/高熵区 · BitLocker可解锁</span></div>
+        <p class="sub" style="margin:6px 0">检测"数据还在但被锁"：加密卷头识别 + 逐MB熵扫描。BitLocker 卷支持<b>密码 / 48位恢复口令 / 清除密钥</b>解锁并解密成 raw 镜像（接全链路恢复）。</p>
+        <div class="actions">
+          <button class="btn primary" onclick="startContent('aesdetect')">🔐 检测当前源</button>
+          <label class="extract-to">密码 <input id="blPass" class="txt" type="password" style="width:160px"></label>
+          <label class="extract-to">恢复口令 <input id="blRecovery" class="txt mono" style="width:230px" placeholder="xxxxxx-xxxxxx-…"></label>
+          <button class="btn" onclick="startBlUnlock()">🔓 BitLocker解锁</button>
+        </div>
+        <div id="ctAes" class="stat"></div>
+        <div id="blOut" class="stat"></div>
+      </div>
+    </section>
+
+    <!-- 视频修复 -->
+    <section class="page hidden" id="page-mp4repair">
+      <h1>MP4视频修复</h1>
+      <p class="sub">相机/行车记录仪/手机断电导致MP4缺少moov索引——用同设备的完好视频作参考，重建索引使视频可播放。</p>
+      <div class="panel">
+        <div class="panel-head"><span class="micro">修复模式</span></div>
+        <div class="form">
+          <label>完好参考视频（同设备/同参数）
+            <input id="mp4Ref" class="txt mono" style="flex:1" placeholder="如 D:\相机\IMG_0001.MP4（完好）">
+            <button class="btn mini" onclick="chooseFolder('mp4Ref')">浏览</button></label>
+          <label>损坏视频 / 目录
+            <input id="mp4Corrupt" class="txt mono" style="flex:1" placeholder="单个文件或整个目录（自动扫描损坏MP4）">
+            <button class="btn mini" onclick="chooseFolder('mp4Corrupt')">浏览</button></label>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="mp4Start" onclick="startMp4Repair()">🎬 开始修复</button>
+        </div>
+        <div id="mp4Stat" class="stat"></div>
+        <div id="mp4Results"></div>
+      </div>
+      <div class="panel">
+        <div class="tips">
+          <div><b>原理：</b>untrunc引擎分析参考视频的编码参数(SPS/PPS/采样率)，然后遍历损坏视频的mdat数据流逐帧重建索引。</div>
+          <div><b>参考视频要求：</b>同一台设备、相同分辨率/帧率/编码设置录制。行车记录仪用同型号另一段完好录像即可。</div>
+          <div><b>限制：</b>严重碎片化的视频可能部分帧丢失；加密的DRM视频无法修复。</div>
+        </div>
+      </div>
+      <div class="panel" id="davPanel">>
+        <div class="panel-head"><span class="micro">📹 海康 .dav 剥离</span><span class="head-meta">PS包装→裸流 + MP4重封装</span></div>
+        <p class="sub" style="margin:6px 0">海康DVR/NVR导出的 <code>.dav</code>(部分型号是 <code>.mpg</code>)是 MPEG-PS 包装：
+        剥掉 pack头/PES壳后就是标准 H.264/H.265 裸流，顺便重封装成能直接播放的 MP4。</p>
+        <div class="form">
+          <label>.dav 文件
+            <input id="davSrc" class="txt mono" style="flex:1" placeholder="如 E:\录像\ch01_20261108000000.dav">
+            <button class="btn mini" onclick="chooseFolder('davSrc')">浏览</button></label>
+        </div>
+        <div class="actions">
+          <button class="btn primary" onclick="startDavStrip()">📹 剥离并转MP4</button>
+        </div>
+        <div id="davStat" class="stat"></div>
+      </div>
+    </section>
+
+    <!-- 操作历史 -->
+    <section class="page hidden" id="page-about">
+      <h1>关于</h1>
+      <div class="panel">
+        <h2 style="margin:4px 0">🛟 数据抢救工作台</h2>
+        <p class="sub">绿色便携数据恢复工具 · 恢复通道 20+ · 中文界面 · 全程只读源盘</p>
+        <p class="meta" id="aboutVer">版本加载中…</p>
+        <div class="kv" style="margin-top:10px">
+          <b>使用原则</b><div>盘在恶化就别再用它——先镜像,一切恢复都在镜像上做;输出绝不落源盘;结果如实标注完整/部分/无,不假装完好。</div>
+          <b style="margin-top:10px">⚠️ 免责声明</b><div>数据恢复存在进一步损坏的理论风险。本工具按只读源盘设计并尽力保护现场,但对任何数据丢失不承担责任。重要数据请先做镜像备份;商业救援场景请咨询专业数据恢复服务。</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="micro">开源致谢</span><span class="head-meta">许可证全文随包交付(licenses/)</span></div>
+        <div class="kv">
+          <b>SectorForge</b><div>恢复引擎(MIT) · github.com/terraseraph/sectorforge</div>
+          <b>untrunc</b><div>MP4视频修复(GPL-2.0) · github.com/anthwlock/untrunc</div>
+          <b>smartmontools</b><div>SMART健康查询(GPL-2.0+) · smartmontools.org</div>
+          <b>pywebview</b><div>窗口框架(BSD-3)</div>
+          <b>Python / PyInstaller</b><div>运行时与打包(PSF / GPL+bootloader例外)</div>
+        </div>
+        <p class="sub" style="margin-top:8px">GPL 组件以独立子进程方式调用,其源码可从对应官方仓库获取。</p>
+        <p class="sub">主程序源码以 <b>Apache License 2.0</b> 发布。</p>
+      </div>
+    </section>
+
+    <section class="page hidden" id="page-history">
+      <h1>操作历史</h1>
+      <p class="sub">本次会话的全部任务记录，含状态和关键结果。</p>
+      <div class="panel">
+        <div class="panel-head">
+          <span class="micro">任务列表</span>
+          <span class="head-meta" id="histCount"></span>
+          <button class="btn ghost mini" onclick="loadHistory()">↻ 刷新</button>
+        </div>
+        <div id="histList"></div>
+      </div>
+    </section>
+
+    <!-- 成果总览 -->
+    <section class="page hidden" id="page-harvest">
+      <h1>成果总览</h1>
+      <p class="sub">全部任务产出的一张账：恢复了什么、放在哪、共多少。交付前先看这里。</p>
+      <div class="panel">
+        <div class="panel-head">
+          <span class="micro">产出清单</span>
+          <span class="head-meta" id="hvMeta"></span>
+          <button class="btn ghost mini" onclick="loadHarvest()">↻ 刷新</button>
+        </div>
+        <div id="hvSummary" class="stat"></div>
+        <div id="hvList"></div>
+      </div>
+    </section>
+
+    <!-- 结果 -->
+    <section class="page hidden" id="page-result">
+      <h1>提取结果</h1>
+      <div id="resultBox" class="panel"><div class="phase">等待提取任务…</div></div>
+      <div class="panel">
+        <div class="panel-head"><span class="micro">收尾 · 报告</span><span class="head-meta">单HTML文件 · 可发给他人看</span></div>
+        <div class="form">
+          <label>报告保存到
+            <input id="reportOut" class="txt mono" style="flex:1" placeholder="如 D:\恢复输出\报告.html">
+            <button class="btn mini" onclick="chooseFolder('reportOut')">浏览…</button></label>
+        </div>
+        <div class="actions">
+          <button class="btn primary" onclick="startReport()">📄 生成HTML报告</button>
+        </div>
+        <div id="reportStat" class="stat"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- 底部状态栏 -->
+<footer class="statusbar">
+  <button class="console-chip" onclick="toggleConsole()">控制台 <span class="badge" id="conCount">0</span></button>
+  <span class="status-text" id="statusText">空闲。没有任务在跑。</span>
+  <span class="mode-hint" id="modeHint"></span>
+</footer>
+<div class="console hidden" id="consoleBox"><div class="console-inner mono" id="consoleLog"></div></div>
+
+<div id="toast" class="toast hidden"></div>
+<script src="virtual.js?v=2"></script>
+<script src="app.js?v=2"></script>
+</body>
+</html>
