@@ -67,7 +67,15 @@ GPL 组件以独立子进程方式调用,其源码可从对应官方仓库获取
 
 ```bash
 python server.py 8799          # 开发模式起服务
-python -I tests/run_all.py     # 16 套测试
+python -I tests/run_all.py     # 17 套测试
 ```
 
-开发进度与全部设计决策见 `开发日志.md`;许可决策见 `许可合规分析.md`。
+运行所需的三个二进制(sf-cli / untrunc / smartctl)下载指引见 [RELEASE_NOTES.md](RELEASE_NOTES.md)。
+
+## ☕ 支持作者
+
+本工具开源免费,无广告无付费墙。如果它帮您抢回了重要的数据,可以请作者喝杯咖啡——金额随意,这是持续更新的动力:
+
+<div align="center">
+  <img src="docs/donate.jpg" alt="支持作者" width="220">
+</div>

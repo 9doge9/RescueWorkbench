@@ -121,6 +121,8 @@ class Handler(BaseHTTPRequestHandler):
             self._static('style.css', 'text/css')
         elif p.startswith('/themes.css'):
             self._static('themes.css', 'text/css')
+        elif p == '/donate.jpg':
+            self._static('donate.jpg', 'image/jpeg')
         elif p == '/api/devices':
             self._json(get_devices_enriched())
         elif p == '/api/survey':
