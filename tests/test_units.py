@@ -154,8 +154,45 @@ def test_harvest():
     finally:
         shutil.rmtree(base, ignore_errors=True)
 
+def test_jobstore_stability():
+    """稳定性审计修复的回归: 原子写往返 + 假活任务扫除 + limit"""
+    import jobstore
+    import time as _t
+    old_dir = jobstore.JOBS_DIR
+    import tempfile, shutil
+    d = tempfile.mkdtemp()
+    try:
+        jobstore.JOBS_DIR = d                    # 重定向到临时目录
+        j = jobstore.new_job('probe', {'source': 'X'})
+        j['state'] = 'running'
+        jobstore.save(j)
+        # 原子写: 目录里不应残留 .tmp
+        assert not any(f.endswith('.tmp') for f in os.listdir(d)), os.listdir(d)
+        # 往返
+        j2 = jobstore.load(j['id'])
+        assert j2 and j2['state'] == 'running'
+        # 假活扫除
+        j3 = jobstore.new_job('image', {'source': 'Y'})
+        j3['state'] = 'pending'
+        jobstore.save(j3)
+        n = jobstore.mark_stale_jobs()
+        assert n == 2, n
+        assert jobstore.load(j['id'])['state'] == 'failed'
+        assert '服务重启中断' in jobstore.load(j['id'])['error']
+        # limit
+        assert len(jobstore.list_jobs(limit=1)) == 1
+        # done的不被扫
+        j4 = jobstore.new_job('hash', {'source': 'Z'})
+        j4['state'] = 'done'
+        jobstore.save(j4)
+        assert jobstore.mark_stale_jobs() == 0
+        assert jobstore.load(j4['id'])['state'] == 'done'
+    finally:
+        jobstore.JOBS_DIR = old_dir
+        shutil.rmtree(d, ignore_errors=True)
+
 if __name__ == '__main__':
-    for _t in (test_findpart, test_orphan_strip, test_harvest):
+    for _t in (test_findpart, test_orphan_strip, test_harvest, test_jobstore_stability):
         try:
             _t()
         except AssertionError as e:

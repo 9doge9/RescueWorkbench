@@ -193,7 +193,7 @@ class Handler(BaseHTTPRequestHandler):
         elif p == '/api/jobs':
             self._json({'jobs': [
                 {k: j.get(k) for k in ('id', 'kind', 'state', 'created', 'params', 'last_event', 'result', 'error')}
-                for j in jobstore.list_jobs()]})
+                for j in jobstore.list_jobs(limit=200)]})
         elif p == '/api/harvest':
             import harvest
             self._json(harvest.collect())
@@ -370,6 +370,9 @@ if __name__ == '__main__':
         else:
             print('  引擎: sf-cli %s (契约v2 OK)' % ev.get('version'))
     print('*' * 46)
+    stale = jobstore.mark_stale_jobs()
+    if stale:
+        print('  已清扫%d个假活任务(上个进程中断遗留)' % stale)
     srv = ThreadingHTTPServer(('127.0.0.1', PORT), Handler)
     try:
         srv.serve_forever()

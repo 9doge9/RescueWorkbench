@@ -20,6 +20,16 @@ sys.path.insert(0, os.path.join(ROOT, 'engine'))
 # LibreOffice python自spawn会WinError5 → 子进程统一走py启动器
 PY = ['py', '-3'] if os.system('py -3 -c "1" >nul 2>&1') == 0 else [sys.executable]
 
+
+def free_port():
+    import socket
+    s = socket.socket()
+    s.bind(('127.0.0.1', 0))
+    p = s.getsockname()[1]
+    s.close()
+    return p
+
+
 import mcp_server
 import schema
 
@@ -50,7 +60,7 @@ def test_tools():
 
 
 def test_e2e(tmp):
-    port = 8977
+    port = free_port()
     srv = subprocess.Popen(PY + ['-I', os.path.join(ROOT, 'server.py'), str(port)],
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     base = 'http://127.0.0.1:%d' % port
@@ -98,7 +108,7 @@ def test_e2e(tmp):
 def test_stdio(tmp):
     """stdio协议烟雾: 子进程跑initialize+tools/list"""
     import threading
-    p = subprocess.Popen(PY + ['-I', os.path.join(ROOT, 'mcp_server.py'), '8978'],
+    p = subprocess.Popen(PY + ['-I', os.path.join(ROOT, 'mcp_server.py'), str(free_port())],
                          stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                          stderr=subprocess.DEVNULL, text=True, encoding='utf-8')
     try:

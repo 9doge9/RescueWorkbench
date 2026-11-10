@@ -64,12 +64,35 @@ def main():
     os.chdir(root)
     import server as srv
     srv.ROOT = base                      # 静态web资源根
+    import jobstore
+    jobstore.mark_stale_jobs()           # 清扫上个进程中断遗留的假活任务
     from http.server import ThreadingHTTPServer
     httpd = ThreadingHTTPServer(('127.0.0.1', port), srv.Handler)
     t = threading.Thread(target=httpd.serve_forever, daemon=True)
     t.start()
 
-    import webview
+    try:
+        import webview
+    except Exception as e:
+        # WebView2 Runtime缺失(未打补丁的Win10/精简系统) — 不能闪退:
+        # 本地服务已就绪, 回退系统浏览器打开, 功能完全等价(仅失去原生文件选择器)
+        import time as _time
+        import webbrowser
+        url = 'http://127.0.0.1:%d/' % port
+        print('*' * 46)
+        print('  原生窗口不可用(%s)' % str(e)[:60])
+        print('  已用系统浏览器打开: %s' % url)
+        print('  关闭本窗口即退出。建议安装 WebView2 Runtime获得原生界面:')
+        print('  https://developer.microsoft.com/microsoft-edge/webview2/')
+        print('*' * 46)
+        webbrowser.open(url)
+        try:
+            while True:
+                _time.sleep(3600)      # 挂住主线程=保住本地服务
+        except KeyboardInterrupt:
+            pass
+        httpd.shutdown()
+        return
     # 窗口自适应屏幕: 目标1180x800, 小屏按90%工作区收缩(兼容1366x768老本/150%缩放)
     w, h = 1180, 800
     try:

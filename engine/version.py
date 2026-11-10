@@ -5,7 +5,7 @@ BUILD 取本文件的mtime: PyInstaller构建时随拷贝时间落定, 源码运
 import os
 import time
 
-VERSION = '1.3.0'
+VERSION = '1.3.1'
 
 
 def build_time():

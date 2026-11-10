@@ -1,104 +1,90 @@
-# 🛟 数据抢救工作台
+# 数据抢救工作台
 
-> 一站式数据恢复工具：从损坏的 U 盘 / 硬盘 / 监控盘 / 虚拟机盘 / 加密盘里,把数据抢回来。
+Windows 数据恢复工具。U盘打不开、文件误删、监控录像看不了、盘被 BitLocker 锁住、NAS 阵列盘单块读不出，这些情况都能试着救。中文界面，解压双击就能用。
 
-绿色便携版,**双击即用**,无需安装。中文界面,全程引导。
+源盘全程只读，恢复结果写到别的盘。
 
-> 🌐 **English speakers**: RescueWorkbench is a Chinese-first, portable Windows data-recovery toolkit — verified disk imaging, NTFS/exFAT/ext4/HFS+ recovery, surveillance-video repair, BitLocker unlock, RAID rebuild, ransomware triage. You don't need to read Chinese: hand it to any MCP-capable AI agent (Claude, Codex, Cursor, Trae, ZCode…) and just say what happened, e.g. *"my USB drive asks to format — recover my photos"*. The agent drives the whole rescue and reports back in English. See **[AGENT.md](AGENT.md)** · portable build in **[Releases](../../releases)**.
+> **English speakers**: a Chinese-first portable Windows data-recovery toolkit (verified imaging, NTFS/exFAT/ext4/HFS+ recovery, video repair, BitLocker, RAID). Chinese is not required: any MCP-capable agent (Claude, Codex, Cursor, Trae, ZCode) can drive it — see [AGENT.md](AGENT.md). Portable build in [Releases](../../releases).
 
-## 两种用法，任选其一
+## 怎么用
 
-**👤 自己动手（推荐）**
-双击启动 → 首页"你出了什么事？"选一张卡 → 跟着步骤链走。
-全中文向导，看不懂的面板点"? 何时用"就有三行说明——不需要懂任何术语。
+双击打开，首页选你遇到的情况，比如"U盘提示要格式化"，跟着步骤走。哪一步看不明白，面板右上角有个"何时用"，点开是两三行说明。
 
-**🤖 或者，把工具交给 AI**
-连点都不想点？对 AI 说大白话："我的U盘打不开，帮我救回里面的照片"，
-它就全程接手：体检 → 镜像保现场 → 扫描 → 恢复 → 告诉你文件在哪，
-每一步在做什么都讲给你听，看不懂的输出直接问它。
-Claude、Codex、Cursor、Trae、ZCode 这类 AI 助手都支持——挂载 `mcp_server.py` 即可（见 [AGENT.md](AGENT.md)）。
+不想自己动手就交给 AI。Claude、Codex、Cursor、Trae、ZCode 这类工具挂上 `mcp_server.py`（配置见 [AGENT.md](AGENT.md)），直接说"我的U盘打不开，帮我救回照片"就行。
 
-> 无论哪种方式，安全边界相同：源盘全程只读、输出绝不落源盘。
+两种方式安全机制一样：源盘只读，输出不落源盘。
 
 ## 能做什么
 
-| 场景 | 能力 |
+| 遇到的情况 | 对应能力 |
 |---|---|
-| 💾 盘快坏了 | 校验式镜像(坏区逐扇区定位+断点续传),之后所有操作只在镜像上做 |
-| 📁 误删除 | NTFS/exFAT/FAT32 按原名恢复(含"孤儿目录"深度挖掘) |
-| 🧩 文件系统损坏 | 94 种格式签名雕刻(无需文件系统);纯 MFT 扫描兜底($Boot 损坏也能救) |
-| 📹 监控视频 | H.264/H.265 裸流雕刻 + MP4 moov 重建(断电文件修复) |
-| 🔐 BitLocker | 密码/48位恢复口令解锁并解密成可挂载镜像 |
-| 🖥 虚拟机盘 | VMDK/VHD 检测与展开(动态盘/稀疏盘),解开后当普通盘恢复 |
-| 🗄 RAID 阵列 | 成员盘镜像自动检测参数(级别/条带/盘序/布局)并重组,**缺一块盘也能降级重建** |
-| 🐧 Mac/Linux 盘 | HFS+ 原名恢复;ext4 日志挖掘(已删文件+掉电现场);APFS 识别 |
-| 📧 Outlook | PST/OST 结构体检(孤儿邮件/缺块统计),头损也能兜底扫出邮件清单 |
-| 🦠 勒索现场 | 家族识别 + 免费解密器线索(GandCrab 有免费解密器等) |
-| 🔬 内容取证 | EXIF 时间归档/SQLite 已删记录/Base64 内嵌提取/Windows 事件日志/加密卷检测 |
+| 盘快坏了 | 校验式镜像，坏区定位到扇区、断点续传，之后都在镜像上做 |
+| 误删文件 | NTFS/exFAT/FAT32 按原名恢复，exFAT 支持已删目录深挖 |
+| 文件系统损坏 | 94 种格式签名雕刻；NTFS 的 $Boot 坏了用 MFT 兜底 |
+| 监控录像 | 裸流雕刻、断电 MP4 修复、海康 .dav 剥离转 MP4 |
+| BitLocker | 密码或 48 位恢复口令解锁，解密成可挂载镜像 |
+| 虚拟机盘 | VMDK/VHD 展开，之后当普通盘处理 |
+| RAID 阵列 | 自动检测级别/条带/盘序并重组，RAID5 缺一块盘也能降级重建 |
+| Mac/Linux 盘 | HFS+ 按原名恢复；ext4 日志挖已删文件和掉电现场；APFS 暂只识别 |
+| Outlook | PST/OST 体检，文件头损坏也能兜底扫出邮件清单 |
+| 勒索加密 | 识别家族，查有没有免费解密器 |
+| 取证 | 事件日志（登录/USB/服务安装）、SQLite 已删记录、EXIF 归档 |
 
 ## 快速开始
 
-1. 解压到任意目录,双击 `RescueWorkbench.exe`(弹 UAC 点"是"——读物理盘需要管理员)
-2. 左侧选择场景:体检 → 镜像 → 扫描 → 恢复
-3. **黄金法则:盘在恶化就别再用它**——先做镜像,一切恢复都在镜像上进行
+1. 下载解压，双击 `RescueWorkbench.exe`，UAC 点"是"（读物理盘需要管理员）
+2. 按首页指引走
+3. 一条铁律：怀疑盘要坏，先做镜像，后面全对着镜像做
 
-## 使用原则(血泪经验)
+## 使用原则
 
-- 输出永远不落在源盘上(自动拒绝)
-- 恢复结果逐文件标注可恢复性:完整/部分/无数据,**不假装完好**
-- 检测到"顺序流漂移"(主控说谎)的盘自动切换校验式镜像
-- 中途关机/断电,重跑同一任务即续传
+- 输出不落在源盘（同盘直接拒绝）
+- 恢复结果按完整/部分/无数据如实标注
+- 检测到主控"顺序读漂移"自动改用校验式镜像
+- 中断后重跑同一任务可续传
 
-## ⚠️ 免责声明
+## 已知限制
 
-数据恢复本质上是在坏介质上抢读数据,存在进一步损坏的理论风险。
-本工具按"只读源盘"设计并尽力保护现场,但**对任何数据丢失不承担责任**。
-重要数据请同时做镜像备份后再操作;商业救援场景请先咨询专业数据恢复服务。
+- 海康 DHFS 不支持（.dav 剥离和裸流雕刻可用）
+- BitLocker、exFAT 深挖、HFS+、PST 目前经合成样本验证，真实盘兼容性以实测为准
+- H.264 重封装的 B 帧顺序可能不完美，裸流原件保留
+- APFS 只识别，不能恢复
+- 需要 Windows 10 及以上，64 位
+
+## 免责声明
+
+数据恢复是在坏介质上抢读数据，存在进一步损坏的理论风险。本工具按只读源盘设计，但对任何数据丢失不承担责任。重要数据请先做镜像备份；商业救援请咨询专业数据恢复服务。
 
 ## 许可证
 
-主程序源码以 **Apache License 2.0** 发布（见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)）。
-随附第三方组件各适用其许可证（见下表与 `licenses/` 目录）。
+主程序源码 Apache License 2.0（见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)），随附组件各适用其许可（`licenses/` 目录）。
 
 ## 开源致谢
 
-本工具包含以下开源组件(许可证全文见 `licenses/` 目录):
+- [SectorForge](https://github.com/terraseraph/sectorforge)（MIT）— 恢复引擎
+- [untrunc](https://github.com/anthwlock/untrunc)（GPL-2.0）— MP4 修复
+- [smartmontools](https://www.smartmontools.org/)（GPL-2.0+）— SMART 查询
+- [pywebview](https://github.com/r0x0r/pywebview)（BSD-3）— 窗口框架
+- Python（PSF）、PyInstaller（GPL + bootloader 例外）
 
-- **[SectorForge](https://github.com/terraseraph/sectorforge)** (MIT) — 恢复引擎
-- **[untrunc](https://github.com/anthwlock/untrunc)** (GPL-2.0) — MP4 视频修复
-- **[smartmontools](https://www.smartmontools.org/)** (GPL-2.0+) — SMART 健康查询
-- **[pywebview](https://github.com/r0x0r/pywebview)** (BSD-3) — 窗口框架
-- Python (PSF License)、PyInstaller (GPL + bootloader 例外)
-
-GPL 组件以独立子进程方式调用,其源码可从对应官方仓库获取。
-
-## 已知限制(诚实清单)
-
-- 海康监控专用 DHFS 文件系统暂不支持(裸流雕刻可用)
-- BitLocker/exFAT 深挖/HFS+/PST 经合成样本验证,与真实盘的兼容性以实测为准
-- H.264 重封装视频的 B 帧播放顺序可能不完美(裸流原件始终保留)
-- APFS 仅识别,文件级恢复未实现
+GPL 组件以独立子进程方式调用，源码可从各自官方仓库获取。
 
 ## 开发
 
 ```bash
 python server.py 8799          # 开发模式起服务
-python -I tests/run_all.py     # 17 套测试
+python -I tests/run_all.py     # 18 套测试
 ```
 
-运行所需的三个二进制(sf-cli / untrunc / smartctl)下载指引见 [RELEASE_NOTES.md](RELEASE_NOTES.md)。
+运行所需三个二进制（sf-cli / untrunc / smartctl）的下载指引见 [RELEASE_NOTES.md](RELEASE_NOTES.md)。
 
-## 🤖 AI / 脚本接入
+## AI 和脚本接入
 
-本工具的全部能力通过本地JSON API暴露, 可被AI Agent直接操作:
+`GET /api/schema` 返回全部任务类型和参数。支持 MCP 的客户端挂 `mcp_server.py`，每个恢复通道是一个工具。见 [AGENT.md](AGENT.md)。
 
-- 能力自描述: `GET /api/schema` (全部任务类型/参数/场景决策表)
-- MCP接入: `mcp_server.py` — Claude Desktop / Cursor / ZCode 等客户端挂载后, 每个恢复通道都是一个工具
-- 详见 [AGENT.md](AGENT.md)
+## 支持作者
 
-## ☕ 支持作者
-
-本工具开源免费,无广告无付费墙。如果它帮您抢回了重要的数据,可以请作者喝杯咖啡——金额随意,这是持续更新的动力:
+工具免费开源。如果它帮您救回过重要数据，可以扫码请作者喝杯咖啡：
 
 <div align="center">
   <img src="docs/donate.jpg" alt="支持作者" width="220">

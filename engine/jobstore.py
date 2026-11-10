@@ -29,9 +29,21 @@ def new_job(kind, params):
 
 
 def save(job):
+    """原子写: 临时文件+os.replace; 杀软/索引器瞬时锁文件时重试(压力审计实测WinError 5)"""
     job['updated'] = time.time()
-    with open(_path(job['id']), 'w', encoding='utf-8') as f:
-        json.dump(job, f, ensure_ascii=False, indent=1, default=str)
+    fp = _path(job['id'])
+    tmp = fp + '.tmp'
+    last = None
+    for attempt in range(3):
+        try:
+            with open(tmp, 'w', encoding='utf-8') as f:
+                json.dump(job, f, ensure_ascii=False, indent=1, default=str)
+            os.replace(tmp, fp)
+            return
+        except PermissionError as e:      # AV/索引器瞬时占用
+            last = e
+            time.sleep(0.05 * (attempt + 1))
+    raise last
 
 
 def load(job_id):
@@ -42,7 +54,7 @@ def load(job_id):
         return None
 
 
-def list_jobs():
+def list_jobs(limit=None):
     if not os.path.isdir(JOBS_DIR):
         return []
     out = []
@@ -51,4 +63,18 @@ def list_jobs():
             j = load(fn[:-5])
             if j:
                 out.append(j)
-    return sorted(out, key=lambda x: -x['created'])
+    out.sort(key=lambda x: -x['created'])
+    return out[:limit] if limit else out
+
+
+def mark_stale_jobs(reason='服务重启中断(可续传任务请重跑同参数)'):
+    """服务启动时清扫: 上个进程死掉时卡在running/pending的任务 → failed
+    不清扫的话UI/API会永远显示"运行中"(假活)。"""
+    n = 0
+    for j in list_jobs():
+        if j.get('state') in ('running', 'pending'):
+            j['state'] = 'failed'
+            j['error'] = reason
+            save(j)
+            n += 1
+    return n
