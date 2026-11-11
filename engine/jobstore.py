@@ -38,6 +38,8 @@ def save(job):
         try:
             with open(tmp, 'w', encoding='utf-8') as f:
                 json.dump(job, f, ensure_ascii=False, indent=1, default=str)
+                f.flush()
+                os.fsync(f.fileno())       # NTFS断电安全: 数据先落盘再换名(与mapfile同款)
             os.replace(tmp, fp)
             return
         except PermissionError as e:      # AV/索引器瞬时占用

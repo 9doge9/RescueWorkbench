@@ -191,8 +191,30 @@ def test_jobstore_stability():
         jobstore.JOBS_DIR = old_dir
         shutil.rmtree(d, ignore_errors=True)
 
+def test_fsutil():
+    import fsutil
+    import tempfile, shutil, os
+    cases = [('CON.txt', '_CON.txt'), ('nul', '_nul'), ('COM1.log', '_COM1.log'),
+             ('报表. ', '报表'), ('ok.jpg', 'ok.jpg'), ('a<b>c?.txt', 'abc.txt'),
+             ('LPT¹.pdf', '_LPT¹.pdf'), ('', 'recovered'), ('x' * 200, 'x' * 120),
+             ('尾部空格 ', '尾部空格')]
+    for src, want in cases:
+        got = fsutil.safe_name(src)
+        assert got == want, (src, got, want)
+    # 落盘实证: 处理后的名字能真实创建, 且两个坑名字不会互相覆盖
+    d = tempfile.mkdtemp()
+    try:
+        for nm in ('_CON.txt', '报表'):
+            fp = os.path.join(d, nm)
+            with open(fp, 'wb') as f:
+                f.write(b'x')
+            assert os.path.isfile(fp)
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+
+
 if __name__ == '__main__':
-    for _t in (test_findpart, test_orphan_strip, test_harvest, test_jobstore_stability):
+    for _t in (test_findpart, test_orphan_strip, test_harvest, test_jobstore_stability, test_fsutil):
         try:
             _t()
         except AssertionError as e:

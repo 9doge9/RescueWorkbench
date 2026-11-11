@@ -19,12 +19,31 @@ function go(page){ document.querySelectorAll('.page').forEach(p=>p.classList.tog
 document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>go(n.dataset.page)));
 document.querySelectorAll('.nav-item[data-page=harvest]').forEach(n=>n.addEventListener('click',()=>loadHarvest()));
 
+// SSE连接守卫: 浏览器对同源HTTP/1.1只有6条并发连接, 每个EventSource永久占一条
+// 并行任务多时降级为轮询, 否则整个界面(所有fetch)会饿死
+let sseActive=0;
 function streamJob(jobId, onEv, onEnd){
+  const finish=(ev)=>{ if(onEnd)onEnd(ev); };
+  if(sseActive>=4){
+    const timer=setInterval(async()=>{
+      let j=null;
+      try{ j=await api('/api/job/'+jobId); }catch(e){}
+      if(!j||!j.id){clearInterval(timer);finish({_end:true});return;}   // 任务不存在: 别无限轮询
+      if(j.state==='pending'||j.state==='running')return;
+      if(j.last_event)onEv(j.last_event);
+      if(j.state==='done'&&j.result){clearInterval(timer);onEv(j.result);finish({_end:true});}
+      else if(j.state==='failed'||j.state==='cancelled'){clearInterval(timer);if(j.error)failUI(String(j.error).split('\n')[0]);finish({_end:true});}
+    },1200);
+    return;
+  }
+  sseActive++;
   const es=new EventSource('/api/events/'+jobId);
+  let closed=false;
+  const close=()=>{ if(!closed){closed=true;sseActive--;es.close();} };
   es.onmessage=e=>{ const ev=JSON.parse(e.data);
-    if(ev.event==='_end'||ev.event==='_replay_state'){ es.close(); if(ev.event==='_replay_state'&&ev.state==='failed'&&ev.result==null){ api('/api/job/'+jobId).then(j=>{if(j&&j.error)failUI(j.error.split('\n')[0]);}).catch(()=>{}); } if(onEnd)onEnd(ev); return; }
+    if(ev.event==='_end'||ev.event==='_replay_state'){ close(); if(ev.event==='_replay_state'&&ev.state==='failed'&&ev.result==null){ api('/api/job/'+jobId).then(j=>{if(j&&j.error)failUI(j.error.split('\n')[0]);}).catch(()=>{}); } finish(ev); return; }
     if(ev.event==='error'){failUI(ev.message);} if(ev.event==='command'){conLog('$ '+ev.command);} onEv(ev); };
-  es.onerror=()=>{es.close();};
+  es.onerror=()=>{close();};
 }
 function failUI(msg){ toast('❌ '+msg); setStatus('失败：'+msg); conLog('[错误] '+msg); const i=$('imgStat'); if(i&&!$('imgProg').classList.contains('hidden')){i.textContent='❌ '+msg;} const e=$('extStat'); if(e)e.textContent='❌ '+msg; }
 async function cancelJob(id){ await api('/api/job/'+id+'/cancel',{method:'POST'}); setStatus('已请求停止…'); }

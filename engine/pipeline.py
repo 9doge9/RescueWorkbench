@@ -520,7 +520,7 @@ def _exfatdeep(bus, cancel, p):
                     data, mode, trunc = exfat_deep.extract(vol, r)
                 except OSError:
                     data, mode, trunc = b'', 'error', True
-                safe = ''.join(c for c in r['name'] if c not in '\\/:*?"<>|')[:120] or 'unnamed'
+                safe = fsutil.safe_name(r['name'], 'unnamed')
                 dest = os.path.join(p['out'], safe)
                 k = 1
                 while os.path.exists(dest):
@@ -597,7 +597,7 @@ def _ext4journal(bus, cancel, p):
                 return
             nm = next((n for n in res['names'] if n['journal_ino'] == ino), None)
             base = (nm['name'] if nm and nm.get('name') else 'inode_%s' % ino)
-            safe = ''.join(c for c in base if c not in '\\/:*?"<>|')[:120]
+            safe = fsutil.safe_name(base)
             dest = os.path.join(p['out'], safe)
             k = 1
             while os.path.exists(dest):
@@ -661,7 +661,8 @@ def _davstrip(bus, cancel, p):
     if not dav.is_dav(src):
         raise RuntimeError('未识别到PS流(00 00 01 BA pack头) — 不是海康式.dav/.mpg')
     os.makedirs(p['out'], exist_ok=True)
-    base = os.path.splitext(os.path.basename(src))[0]
+    import fsutil
+    base = fsutil.safe_base(src)
     raw = os.path.join(p['out'], base + '.h264')
     bus.emit({'event': 'phase', 'message': '剥离PS包装(视频PES→裸流)…'})
     st = dav.extract_video(src, raw, on_progress=lambda e: bus.emit(e), cancel=cancel)
@@ -782,8 +783,7 @@ def _hfslist(bus, cancel, p):
                     bus.emit({'event': 'cancelled'})
                     return
                 data = vol.read_file(fl)
-                safe = ''.join(c for c in fl['path'] if c not in '\\/:*?"<>|') or \
-                    'file_%d' % i
+                safe = fsutil.safe_name(fl['path'], 'file_%d' % i)
                 dest = os.path.join(p['out'], safe)
                 k = 1
                 while os.path.exists(dest):
